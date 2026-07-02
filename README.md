@@ -7,7 +7,8 @@ own git branch and is wired into this superproject as a submodule.
 snip-demo/
 ├── backend/    ← Bun HTTP server          (branch: backend)
 ├── frontend/   ← Angular 19 SPA          (branch: frontend)
-└── cli/        ← Node.js CLI             (branch: cli)
+├── cli/        ← Node.js CLI             (branch: cli)
+└── bundle/     ← Generated release       (branch: bundle  — do not hand-edit)
 ```
 
 ## Architecture
@@ -35,12 +36,13 @@ The **frontend** and the **CLI** are independent clients that speak the same API
 
 ## Branch / submodule layout
 
-| Branch     | Submodule path | Contents                                  |
-|------------|----------------|-------------------------------------------|
-| `backend`  | `backend/`     | `server.js`, `package.json`, README       |
-| `frontend` | `frontend/`    | Angular 19 app (`snip-frontend`)          |
-| `cli`      | `cli/`         | `cli.js`, shell wrappers, `package.json`  |
-| `main`     | *(superproject)* | This README + `.gitmodules` pointers   |
+| Branch     | Submodule path | Contents                                                 |
+|------------|----------------|----------------------------------------------------------|
+| `backend`  | `backend/`     | `server.js`, `package.json`, README                      |
+| `frontend` | `frontend/`    | Angular 19 app (`snip-frontend`)                         |
+| `cli`      | `cli/`         | `cli.js`, shell wrappers, `package.json`                 |
+| `bundle`   | `bundle/`      | **Generated** — `server.js`, `cli.js`, `public/`, Docker |
+| `main`     | *(superproject)* | This README + `.gitmodules` + `scripts/`              |
 
 ## Clone
 
@@ -133,3 +135,26 @@ git add backend frontend cli
 git commit -m "chore: bump all submodules"
 git push
 ```
+
+## Bundle — release artefact
+
+The `bundle/` submodule (branch: `bundle`) is **generated output**. Never edit
+it by hand. Run the build script instead:
+
+```sh
+node scripts/build-bundle.mjs           # assemble + commit (dry run)
+node scripts/build-bundle.mjs --push    # assemble + commit + push
+```
+
+The script:
+1. Pulls the latest tip of `backend`, `frontend`, and `cli`
+2. Runs `npm install && ng build` in `frontend/`
+3. Copies `server.js`, `cli.js`, and the compiled SPA into `bundle/`
+4. Writes `.env` (`PUBLIC_DIR=./public`), `package.json`, `Dockerfile`, and
+   `railway.json` into `bundle/`
+5. Commits inside `bundle/` and bumps the superproject pointer — skipping
+   both commits when nothing has changed (safe to run repeatedly)
+
+The assembled bundle is self-contained: `bun start` in the `bundle/` folder
+runs the backend and also serves the Angular SPA.
+
