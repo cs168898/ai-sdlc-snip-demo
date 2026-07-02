@@ -138,6 +138,14 @@ write(join(BUNDLE, 'railway.json'), JSON.stringify({
   deploy: { startCommand: 'bun server.js', restartPolicyType: 'ON_FAILURE' },
 }, null, 2) + '\n');
 
+// ── helpers for push ─────────────────────────────────────────────────────────
+
+/** Commits ahead of a remote ref (empty string = nothing to push). */
+function unpushedLog(cwd, remoteRef) {
+  const r = spawnSync('git', ['log', '--oneline', `${remoteRef}..HEAD`], { cwd });
+  return r.status === 0 ? (r.stdout?.toString().trim() ?? '') : '';
+}
+
 // ── 4. Commit inside bundle/ ──────────────────────────────────────────────────
 //
 // Submodule checkouts are typically in detached-HEAD state.
@@ -148,12 +156,7 @@ run('git add .', BUNDLE);
 
 if (hasStagedChanges(BUNDLE)) {
   run('git commit -m "chore: bundle release"', BUNDLE);
-  if (PUSH) {
-    run('git push origin HEAD:bundle', BUNDLE);
-    console.log('  \u2713 pushed bundle branch');
-  } else {
-    console.log('  (skipping push — rerun with --push to publish)');
-  }
+  console.log('  committed bundle/');
 } else {
   console.log('  nothing to commit in bundle/');
 }
@@ -165,14 +168,32 @@ run('git add backend frontend cli bundle');
 
 if (hasStagedChanges(ROOT)) {
   run('git commit -m "chore: bump submodules (bundle release)"');
-  if (PUSH) {
+  console.log('  committed superproject');
+} else {
+  console.log('  nothing to commit in superproject');
+}
+
+// ── 6. Push (when --push) — always push any unpublished commits ───────────────
+
+if (PUSH) {
+  console.log('\n[6/6] Pushing...');
+  const bundleAhead = unpushedLog(BUNDLE, 'origin/bundle');
+  if (bundleAhead) {
+    run('git push origin HEAD:bundle', BUNDLE);
+    console.log('  \u2713 pushed bundle branch');
+  } else {
+    console.log('  bundle branch already up to date on remote');
+  }
+
+  const superAhead = unpushedLog(ROOT, '@{u}');
+  if (superAhead) {
     run('git push');
     console.log('  \u2713 pushed main');
   } else {
-    console.log('  (skipping push — rerun with --push to publish)');
+    console.log('  main already up to date on remote');
   }
 } else {
-  console.log('  nothing to commit in superproject');
+  console.log('\n  (skipping push — rerun with --push to publish)');
 }
 
 console.log('\nDone. \u2713');
