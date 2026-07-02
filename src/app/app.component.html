@@ -1,0 +1,59 @@
+<div class="container">
+  <header>
+    <h1>Snip</h1>
+    <p class="tagline">Tiny URL shortener</p>
+  </header>
+
+  <section class="form-section">
+    <form (ngSubmit)="shorten()">
+      <input
+        type="text"
+        [(ngModel)]="urlValue"
+        name="url"
+        placeholder="https://example.com/very/long/url"
+        autocomplete="off"
+      />
+      <button type="submit" [disabled]="loading()">
+        {{ loading() ? 'Shortening…' : 'Shorten' }}
+      </button>
+    </form>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    @if (newLink(); as link) {
+      <div class="result">
+        <span>Short link:</span>
+        <a [href]="link.shortUrl" target="_blank" rel="noopener">{{ link.shortUrl }}</a>
+      </div>
+    }
+  </section>
+
+  <section class="table-section">
+    <h2>All links</h2>
+    @if (links().length === 0) {
+      <p class="empty">No links yet — shorten one above!</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Original URL</th>
+            <th>Hits</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (link of links(); track link.code) {
+            <tr>
+              <td><a [href]="link.shortUrl" target="_blank" rel="noopener">{{ link.code }}</a></td>
+              <td class="url-cell" [title]="link.url">{{ link.url }}</td>
+              <td>{{ link.hits }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</div>
+

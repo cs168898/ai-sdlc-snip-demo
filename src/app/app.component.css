@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  color: #1a1a1a;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  color: #7c3aed;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  margin: 0.25rem 0 2rem;
+  color: #6b7280;
+}
+
+/* ── Form ── */
+.form-section form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.form-section input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-section input:focus {
+  border-color: #7c3aed;
+}
+
+.form-section button {
+  padding: 0.6rem 1.3rem;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.form-section button:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.form-section button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc2626;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.result {
+  margin-top: 0.85rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.result a {
+  color: #7c3aed;
+  word-break: break-all;
+}
+
+/* ── Table ── */
+.table-section {
+  margin-top: 2.5rem;
+}
+
+.table-section h2 {
+  font-size: 1.15rem;
+  margin-bottom: 0.75rem;
+  color: #374151;
+}
+
+.empty {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+}
+
+td.url-cell {
+  max-width: 380px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #374151;
+}
+
+a {
+  color: #7c3aed;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
