@@ -1,0 +1,12 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/cs168898/ai-sdlc-snip-demo
+	branch = backend
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/cs168898/ai-sdlc-snip-demo
+	branch = frontend
+[submodule "cli"]
+	path = cli
+	url = https://github.com/cs168898/ai-sdlc-snip-demo
+	branch = cli
